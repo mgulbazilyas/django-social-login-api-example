@@ -1,0 +1,8 @@
+---
+import ProviderLogin from './login.jsx';
+import ProviderCallback from './callback.jsx';
+const  params  = Astro.params;
+
+---
+
+<ProviderCallback client:load params={params} />

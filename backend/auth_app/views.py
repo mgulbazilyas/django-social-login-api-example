@@ -6,10 +6,14 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import redirect
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 # from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
+from django.contrib.auth import get_user_model
+from rest_framework.authtoken.models import Token
 
+User = get_user_model()
+frontend_url = 'http://127.0.0.1:4321';
 class OAuthLoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -29,7 +33,7 @@ class OAuthLoginView(APIView):
             )
         elif provider == 'facebook':
             auth_url = (
-                'https://www.facebook.com/v11.0/dialog/oauth'
+                'https://www.facebook.com/v21.0/dialog/oauth'
                 '?response_type=code'
                 f'&client_id={social_auth["client_id"]}'
                 f'&redirect_uri={social_auth["redirect_uri"]}'
@@ -37,7 +41,7 @@ class OAuthLoginView(APIView):
             )
         elif provider == 'tiktok':
             auth_url = (
-                'https://www.tiktok.com/auth/authorize/'
+                'https://www.tiktok.com/v2/auth/authorize/'
                 '?response_type=code'
                 f'&client_key={social_auth["client_id"]}'
                 f'&redirect_uri={social_auth["redirect_uri"]}'
@@ -57,7 +61,7 @@ class OAuthCallbackView(APIView):
             return Response({'error': 'Code not provided'}, status=status.HTTP_400_BAD_REQUEST)
 
         # Optionally, you can redirect to the frontend with the code
-        frontend_redirect_url = f'http://localhost:3000/auth/{provider}/callback?code={code}'
+        frontend_redirect_url = f'{frontend_url}/auth/{provider}/callback?code={code}'
         return redirect(frontend_redirect_url)
 
 class TokenView(APIView):
@@ -97,7 +101,7 @@ class TokenView(APIView):
             email = user_info.get('email')
             name = user_info.get('name')
         elif provider == 'facebook':
-            token_url = 'https://graph.facebook.com/v11.0/oauth/access_token'
+            token_url = 'https://graph.facebook.com/v21.0/oauth/access_token'
             data = {
                 'client_id': social_auth['client_id'],
                 'redirect_uri': social_auth['redirect_uri'],
@@ -119,42 +123,49 @@ class TokenView(APIView):
             email = user_info.get('email')
             name = user_info.get('name')
         elif provider == 'tiktok':
-            token_url = 'https://open-api.tiktok.com/oauth/access_token/'
+            token_url = 'https://open.tiktokapis.com/v2/oauth/token/'
             data = {
                 'client_key': social_auth['client_id'],
                 'client_secret': social_auth['client_secret'],
                 'code': code,
                 'grant_type': 'authorization_code',
+                'redirect_uri': social_auth["redirect_uri"],
             }
             token_response = requests.post(token_url, data=data)
             token_data = token_response.json()
-            data_info = token_data.get('data', {})
+            print(token_data);
+            data_info = token_data
             access_token = data_info.get('access_token')
             open_id = data_info.get('open_id')
 
             # Get user info
-            user_info_url = 'https://open-api.tiktok.com/user/info/'
+            user_info_url = 'https://open.tiktokapis.com/v2/user/info/'
             params = {
-                'access_token': access_token,
-                'open_id': open_id,
+                'fields': open_id,
             }
-            user_info_response = requests.get(user_info_url, params=params)
+            user_info_response = requests.get(user_info_url, params=params, headers={
+                'Authorization': f'Bearer {access_token}',
+                # 'Content-Type': 'application/x-www-form-urlencoded',
+            })
             user_info = user_info_response.json()
-            user_data = user_info.get('data', {}).get('user', {})
+            # user_data = user_info.get('data', {}).get('user', {})
             email = None  # TikTok does not provide email
-            name = user_data.get('display_name')
+            name = user_info.get('display_name', '')
         else:
             return Response({'error': 'Invalid provider'}, status=status.HTTP_400_BAD_REQUEST)
 
         if not email:
             email = f'{provider}_{user_info.get("id")}@example.com'
-
+        print(user_info)
         # Create or get user
-        user, created = User.objects.get_or_create(email=email, defaults={'username': email, 'first_name': name})
+        user, created = User.objects.get_or_create(email=email, defaults={'name': name})
+        token, created = Token.objects.get_or_create(user=user)
 
         # Generate JWT tokens
-        refresh = RefreshToken.for_user(user)
+        # refresh = RefreshToken.for_user(user)
         return Response({
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
+            'access': token.key,
+            'token': token.key,
+            # 'user': user,
+            # 'access': str(refresh.access_token),
         })

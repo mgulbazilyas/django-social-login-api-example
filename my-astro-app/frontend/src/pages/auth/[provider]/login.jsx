@@ -7,7 +7,7 @@ const ProviderLogin = ({ params }) => {
 
   useEffect(() => {
     const getAuthUrl = async () => {
-      const response = await fetch(`http://localhost:8000/auth/${params.provider}/login/`);
+      const response = await fetch(`http://localhost:8000/api/auth/${params.provider}/login/`);
       const data = await response.json();
       setAuthUrl(data.auth_url);
     };

@@ -12,4 +12,4 @@ router.register("users", UserViewSet)
 
 app_name = "api"
         
-urlpatterns = router.urls + [path('auth/', include('auth_app.urls')),]
+urlpatterns = router.urls + [path('auth/', include('backend.auth_app.urls')),]

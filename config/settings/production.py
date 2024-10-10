@@ -157,3 +157,25 @@ SPECTACULAR_SETTINGS["SERVERS"] = [
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+BASE_URL = 'http://localhost:8000'  # Update if different
+
+# Social Auth Credentials
+SOCIAL_AUTH = {
+    'google': {
+        'client_id': 'YOUR_GOOGLE_CLIENT_ID',
+        'client_secret': 'YOUR_GOOGLE_CLIENT_SECRET',
+        'redirect_uri': f'{BASE_URL}/auth/google/callback/',
+    },
+    'facebook': {
+        'client_id': 'YOUR_FACEBOOK_APP_ID',
+        'client_secret': 'YOUR_FACEBOOK_APP_SECRET',
+        'redirect_uri': f'{BASE_URL}/auth/facebook/callback/',
+    },
+    'tiktok': {
+        'client_id': 'YOUR_TIKTOK_CLIENT_KEY',
+        'client_secret': 'YOUR_TIKTOK_CLIENT_SECRET',
+        'redirect_uri': f'{BASE_URL}/auth/tiktok/callback/',
+    },
+}

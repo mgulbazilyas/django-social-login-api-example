@@ -1,17 +1,16 @@
 // src/pages/auth/[provider]/callback.jsx
 
 import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 
 const ProviderCallback = ({ params }) => {
-  const location = useLocation();
 
   useEffect(() => {
+    console.log("Provider callback");
     const exchangeCodeForToken = async () => {
-      const queryParams = new URLSearchParams(location.search);
+      const queryParams = new URLSearchParams(window.location.search);
       const code = queryParams.get('code');
 
-      const response = await fetch('http://localhost:8000/auth/token/', {
+      const response = await fetch('http://localhost:8000/api/auth/token/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,7 +33,7 @@ const ProviderCallback = ({ params }) => {
     };
 
     exchangeCodeForToken();
-  }, [params.provider, location.search]);
+  }, [params.provider]);
 
   return <div>Authenticating with {params.provider}...</div>;
 };

@@ -15,7 +15,7 @@ SECRET_KEY = env(
     default="sRbWHpizC1cuU2WGX9BRQOgCl80zHDEg7dBWSxY1ofsH0HOAfXln39AkSgoJVbY4",
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1"]  # noqa: S104
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "4e13-2400-adc5-120-2100-99ab-8893-b482-13f0.ngrok-free.app"]  # noqa: S104
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -84,3 +84,25 @@ CELERY_TASK_EAGER_PROPAGATES = True
 WEBPACK_LOADER["DEFAULT"]["CACHE"] = not DEBUG
 # Your stuff...
 # ------------------------------------------------------------------------------
+
+
+BASE_URL = 'https://4e13-2400-adc5-120-2100-99ab-8893-b482-13f0.ngrok-free.app'  # Update if different
+
+# Social Auth Credentials
+SOCIAL_AUTH = {
+    'google': {
+        'client_id': 'YOUR_GOOGLE_CLIENT_ID',
+        'client_secret': 'YOUR_GOOGLE_CLIENT_SECRET',
+        'redirect_uri': f'{BASE_URL}/api/auth/google/callback/',
+    },
+    'facebook': {
+        'client_id': '1075944913875382',
+        'client_secret': 'cb4d7914976b387187dce1bc96c22e25',
+        'redirect_uri': f'{BASE_URL}/api/auth/facebook/callback/',
+    },
+    'tiktok': {
+        'client_id': 'sbawpu440khsl62e1z',
+        'client_secret': 'Rr4o5dbOl6q2Pu9Fv7WmwC95j0aLBHXw',
+        'redirect_uri': f'{BASE_URL}/api/auth/tiktok/callback/',
+    },
+}

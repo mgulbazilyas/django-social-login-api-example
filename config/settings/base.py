@@ -148,6 +148,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
 ]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:4321',  # Your React frontend URL
+#     'http://127.0.0.1:4321',  # Your React frontend URL
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+
 
 # STATIC
 # ------------------------------------------------------------------------------
@@ -336,7 +343,14 @@ REST_FRAMEWORK = {
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
-
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 # By Default swagger ui is available only to admin user(s). You can change permission classes to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 SPECTACULAR_SETTINGS = {
@@ -358,24 +372,3 @@ WEBPACK_LOADER = {
 }
 # Your stuff...
 # ------------------------------------------------------------------------------
-
-BASE_URL = 'http://localhost:8000'  # Update if different
-
-# Social Auth Credentials
-SOCIAL_AUTH = {
-    'google': {
-        'client_id': 'YOUR_GOOGLE_CLIENT_ID',
-        'client_secret': 'YOUR_GOOGLE_CLIENT_SECRET',
-        'redirect_uri': f'{BASE_URL}/auth/google/callback/',
-    },
-    'facebook': {
-        'client_id': 'YOUR_FACEBOOK_APP_ID',
-        'client_secret': 'YOUR_FACEBOOK_APP_SECRET',
-        'redirect_uri': f'{BASE_URL}/auth/facebook/callback/',
-    },
-    'tiktok': {
-        'client_id': 'YOUR_TIKTOK_CLIENT_KEY',
-        'client_secret': 'YOUR_TIKTOK_CLIENT_SECRET',
-        'redirect_uri': f'{BASE_URL}/auth/tiktok/callback/',
-    },
-}
